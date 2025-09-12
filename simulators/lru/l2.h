@@ -32,13 +32,13 @@ class L2
     private:
         /////////////// DATA ////////////
         /* Modeling a 256KB, 8-way set associative L2 (unified) */
-        int m_numSets = 512; 
-        int m_numWays = 8;
+        int m_numSets = 1024; 
+        int m_numWays = 16;
         int m_lineSz  = 64;   
 
         /* tag store */
         intptr_t** m_tagArray; //[numSets][numWays];
-        uint8_t* m_dirty;     //to determine if a data is dirty or not
+        uint64_t* m_dirty;     //to determine if a data is dirty or not
         #if 0 //we needed locks to protect from backinvalidates from
               //LLC. Since LLC is non-inclusive now, we dont need no locks
         PIN_LOCK m_setLock;    //since we wont have a lot of parallel L1 accesses - using a giant lock for entire L1 (to save memory)
@@ -51,7 +51,7 @@ class L2
         stat_t m_backInvalidates;
         
         // PLRU replacement related
-        uint8_t** m_plru_bits;
+        uint64_t** m_lru_bits;
 
         /////////////// METHODS ////////////
         /* internal methods to implement inserting data */

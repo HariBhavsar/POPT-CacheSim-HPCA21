@@ -47,10 +47,10 @@ class LLC
     private:
         /////////////// DATA ////////////
         /* LLC parameters */
-        /* Modeling a 3MB/core, 16-way set associative LLC */
+        /* Modeling a 2MB/core, 16-way set associative LLC */
         const int numBanks  = 8; //To simulate a NUCA bank 
         const int numCores  = 8;
-        const int m_numSets = 3072 * numCores; 
+        const int m_numSets = 2048 * numCores; 
         const int m_numWays = 16;
         const int m_lineSz  = 64;   
 
