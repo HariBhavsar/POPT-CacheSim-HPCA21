@@ -7,11 +7,11 @@ L2::~L2()
     for (int set = 0; set < m_numSets; ++set)
     {
         delete[] m_tagArray[set];
-        delete[] m_plru_bits[set];
+        delete[] m_lru_bits[set];
     }
     delete[] m_tagArray;
     delete[] m_dirty;
-    delete[] m_plru_bits;
+    delete[] m_lru_bits;
     //delete[] m_setLocks;
 }
 
@@ -21,26 +21,26 @@ void L2::Init()
     m_misses = 0;
     m_writebacks = 0;
 
-    assert(m_numWays == 8); //PLRU implementation assumption
+    // assert(m_numWays == 8); //PLRU implementation assumption
 
     m_tagArray = new intptr_t* [m_numSets];
-    m_dirty    = new uint8_t [m_numSets];
+    m_dirty    = new uint64_t [m_numSets];
     //m_setLocks = new PIN_LOCK [m_numSets];
-    m_plru_bits  = new uint8_t* [m_numSets];
+    m_lru_bits  = new uint64_t* [m_numSets];
     //assert(m_tagArray != nullptr && m_dirty  != nullptr && m_setLocks != nullptr && m_plru_bits != nullptr);
-    assert(m_tagArray != nullptr && m_dirty  != nullptr && m_plru_bits != nullptr);
+    assert(m_tagArray != nullptr && m_dirty  != nullptr && m_lru_bits != nullptr);
     //PIN_InitLock(&m_setLock);
     for (int set = 0; set < m_numSets; ++set)
     {
         //PIN_InitLock(&m_setLocks[set]);
         m_tagArray[set] = new intptr_t [m_numWays];
-        m_plru_bits[set]  = new uint8_t [m_numWays];
-        assert(m_tagArray[set] != nullptr && m_plru_bits[set] != nullptr);
+        m_lru_bits[set]  = new uint64_t [m_numWays];
+        assert(m_tagArray[set] != nullptr && m_lru_bits[set] != nullptr);
         m_dirty[set] = 0;
         for (int way = 0; way < m_numWays; ++way)
         {
             m_tagArray[set][way]  = -1; //the entire array is invalid initially
-            m_plru_bits[set][way] = 0;
+            m_lru_bits[set][way] = 0;
         }
     }
 }
@@ -166,8 +166,8 @@ bool L2::installNewLine(intptr_t addr, int setID, intptr_t &evictedAddr, bool is
     int index = getReplacementIndex(setID);
     //evictedAddr = m_tagArray[setID][index] * m_lineSz; //line to be kicked out
     evictedAddr = m_tagArray[setID][index]; //line to be kicked out
-    uint8_t mask = 1 << index;
-    uint8_t retVal = m_dirty[setID] & mask; 
+    uint64_t mask = 1 << index;
+    uint64_t retVal = m_dirty[setID] & mask; 
     assert(retVal == 0 || retVal == mask);
     if (evictedAddr == -1 * m_lineSz)
         assert(retVal == 0);
@@ -204,32 +204,14 @@ int L2::getReplacementIndex(int setID)
 
     // no empty way have to kick out the oldest way
     int retValue {-1};
-    if (m_plru_bits[setID][0] == 0)
-    {
-       if (m_plru_bits[setID][1] == 0)
-       {
-          if (m_plru_bits[setID][2] == 0) retValue = 0;
-          else                            retValue = 1;   // b2==1
-       }
-       else
-       {                                                  // b1==1
-          if (m_plru_bits[setID][3] == 0) retValue = 2;
-          else                            retValue = 3;   // b3==1
-       }
+    uint64_t oldestWay = 0;
+    for (int i = 0; i < m_numWays; i ++) {
+        if (m_lru_bits[setID][i] < m_lru_bits[setID][oldestWay]) {
+            oldestWay = i;
+        }
     }
-    else
-    {                                                     // b0==1
-       if (m_plru_bits[setID][4] == 0)
-       {
-          if (m_plru_bits[setID][5] == 0) retValue = 4;
-          else                            retValue = 5;   // b5==1
-       }
-       else
-       {                                                  // b4==1
-          if (m_plru_bits[setID][6] == 0) retValue = 6;
-          else                            retValue = 7;   // b6==1
-       }
-    }
+    retValue = oldestWay;
+
     assert(retValue != -1);
     updateReplacementState(setID, retValue);
     return retValue;
@@ -237,14 +219,7 @@ int L2::getReplacementIndex(int setID)
 
 void L2::updateReplacementState(int setID, int wayID)
 {
-      if      (wayID==0) { m_plru_bits[setID][0]=1; m_plru_bits[setID][1]=1; m_plru_bits[setID][2]=1; }
-      else if (wayID==1) { m_plru_bits[setID][0]=1; m_plru_bits[setID][1]=1; m_plru_bits[setID][2]=0; }
-      else if (wayID==2) { m_plru_bits[setID][0]=1; m_plru_bits[setID][1]=0; m_plru_bits[setID][3]=1; }
-      else if (wayID==3) { m_plru_bits[setID][0]=1; m_plru_bits[setID][1]=0; m_plru_bits[setID][3]=0; }
-      else if (wayID==4) { m_plru_bits[setID][0]=0; m_plru_bits[setID][4]=1; m_plru_bits[setID][5]=1; }
-      else if (wayID==5) { m_plru_bits[setID][0]=0; m_plru_bits[setID][4]=1; m_plru_bits[setID][5]=0; }
-      else if (wayID==6) { m_plru_bits[setID][0]=0; m_plru_bits[setID][4]=0; m_plru_bits[setID][6]=1; }
-      else if (wayID==7) { m_plru_bits[setID][0]=0; m_plru_bits[setID][4]=0; m_plru_bits[setID][6]=0; }
+    moveToMRU(setID, wayID);
 }
 
 /* used during backinvalidates, could also be used for a
@@ -255,20 +230,22 @@ void L2::updateReplacementState(int setID, int wayID)
 */
 void L2::moveToLRU (int setID, int wayID)
 {
-      if      (wayID==0) { m_plru_bits[setID][0]=0; m_plru_bits[setID][1]=0; m_plru_bits[setID][2]=0; }
-      else if (wayID==1) { m_plru_bits[setID][0]=0; m_plru_bits[setID][1]=0; m_plru_bits[setID][2]=1; }
-      else if (wayID==2) { m_plru_bits[setID][0]=0; m_plru_bits[setID][1]=1; m_plru_bits[setID][3]=0; }
-      else if (wayID==3) { m_plru_bits[setID][0]=0; m_plru_bits[setID][1]=1; m_plru_bits[setID][3]=1; }
-      else if (wayID==4) { m_plru_bits[setID][0]=1; m_plru_bits[setID][4]=0; m_plru_bits[setID][5]=0; }
-      else if (wayID==5) { m_plru_bits[setID][0]=1; m_plru_bits[setID][4]=0; m_plru_bits[setID][5]=1; }
-      else if (wayID==6) { m_plru_bits[setID][0]=1; m_plru_bits[setID][4]=1; m_plru_bits[setID][6]=0; }
-      else if (wayID==7) { m_plru_bits[setID][0]=1; m_plru_bits[setID][4]=1; m_plru_bits[setID][6]=1; }
+    for (int i = 0; i < m_numWays; i++) {
+        if (m_lru_bits[setID][i] < m_lru_bits[setID][wayID]) {
+            m_lru_bits[setID][i]++;
+        }
+    }
+    m_lru_bits[setID][wayID] = 0;
     
 }
 
 void L2::moveToMRU (int setID, int wayID)
 {
-    // could be useful for pinning-hubs
-    ;
+    for (int i = 0; i < m_numWays; i++) {
+        if (m_lru_bits[setID][i] > m_lru_bits[setID][wayID]) {
+            m_lru_bits[setID][i]--;
+        }
+    }
+    m_lru_bits[setID][wayID] = m_numWays - 1;
 }
 

@@ -21,7 +21,7 @@ void L2::Init()
     m_misses = 0;
     m_writebacks = 0;
 
-    assert(m_numWays == 8); //PLRU implementation assumption
+    // assert(m_numWays == 8); //PLRU implementation assumption
 
     m_tagArray = new intptr_t* [m_numSets];
     m_dirty    = new uint64_t [m_numSets];
@@ -205,7 +205,7 @@ int L2::getReplacementIndex(int setID)
     // no empty way have to kick out the oldest way
     int retValue {-1};
     uint64_t oldestWay = 0;
-    for (uint64_t i = 0; i < m_numWays; i ++) {
+    for (int i = 0; i < m_numWays; i ++) {
         if (m_lru_bits[setID][i] < m_lru_bits[setID][oldestWay]) {
             oldestWay = i;
         }
