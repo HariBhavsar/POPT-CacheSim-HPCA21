@@ -264,7 +264,7 @@ void L2::artificialHit(intptr_t addr) {
     int setID = findSet(addr);
     bool foundMatch = false;
     for (int i = 0; i < m_numWays; i++) {
-        if ((addr/m_lineSz) == (m_tagArray[setID][i])) {
+        if ((addr/m_lineSz) == (m_tagArray[setID][i]/m_lineSz)) {
             foundMatch = true;
             hasGotHit[setID][i] = true;
         }
