@@ -1,0 +1,274 @@
+#include "l2.h"
+
+L2::L2() { }
+
+L2::~L2() 
+{
+    for (int set = 0; set < m_numSets; ++set)
+    {
+        delete[] m_tagArray[set];
+        delete[] m_lru_bits[set];
+    }
+    delete[] m_tagArray;
+    delete[] m_dirty;
+    delete[] m_lru_bits;
+    //delete[] m_setLocks;
+}
+
+void L2::Init()
+{
+    m_hits = 0;
+    m_misses = 0;
+    m_writebacks = 0;
+
+    // assert(m_numWays == 8); //PLRU implementation assumption
+
+    m_tagArray = new intptr_t* [m_numSets];
+    m_dirty    = new uint64_t [m_numSets];
+    //m_setLocks = new PIN_LOCK [m_numSets];
+    m_lru_bits  = new uint64_t* [m_numSets];
+    hasGotHit = new bool* [m_numSets];
+    //assert(m_tagArray != nullptr && m_dirty  != nullptr && m_setLocks != nullptr && m_plru_bits != nullptr);
+    assert(m_tagArray != nullptr && m_dirty  != nullptr && m_lru_bits != nullptr);
+    //PIN_InitLock(&m_setLock);
+    for (int set = 0; set < m_numSets; ++set)
+    {
+        //PIN_InitLock(&m_setLocks[set]);
+        m_tagArray[set] = new intptr_t [m_numWays];
+        m_lru_bits[set]  = new uint64_t [m_numWays];
+        hasGotHit[set] = new bool [m_numWays];
+        assert(m_tagArray[set] != nullptr && m_lru_bits[set] != nullptr);
+        m_dirty[set] = 0;
+        for (int way = 0; way < m_numWays; ++way)
+        {
+            m_tagArray[set][way]  = -1; //the entire array is invalid initially
+            m_lru_bits[set][way] = 0;
+        }
+    }
+}
+
+void L2::insertData(intptr_t addr, int tid, bool isWrite, bool &hit, bool &writeback, intptr_t &evictedAddr, bool updateReplacement)
+{
+    int setID = findSet(addr);
+    //PIN_GetLock(&m_setLocks[setID], tid+1);
+    //PIN_GetLock(&m_setLock, tid+1);
+    hit = isCacheHit(addr, setID, isWrite, updateReplacement);
+    if (hit == false && updateReplacement == true)
+    {
+        writeback = installNewLine(addr, setID, evictedAddr, isWrite);
+    }
+    //PIN_ReleaseLock(&m_setLock);
+    //PIN_ReleaseLock(&m_setLocks[setID]);
+   
+    #if 0 //the following is true only when L2 is inclusive of L1
+    /* Sanity check: we should not have a case where a L1 WB misses in
+    the L2 */
+    if (updateReplacement == false)
+        assert(hit == true);
+    #endif
+
+    if (hit == true)
+        ++m_hits;
+    else
+        ++m_misses;
+
+    if (writeback == true)
+    {
+        ++m_writebacks;
+        assert(evictedAddr != -1 * m_lineSz);
+    }
+
+    if (evictedAddr == -1 * m_lineSz)
+        evictedAddr = -1;
+
+    return;
+}
+
+void L2::backInvalidate(intptr_t addr, int tid)
+{
+    assert(false); //LLC is non-inclusive; nobody to backinvalidate L2
+    #if 0
+    int setID = findSet(addr);
+    bool invalidated {false};
+    assert(setID >= 0 && setID < m_numSets);
+    //PIN_GetLock(&m_setLocks[setID], tid+1);
+    PIN_GetLock(&m_setLock, tid+1);
+    intptr_t maskedAddr = addr / m_lineSz;
+    for (int way = 0; way < m_numWays; ++way)
+    {
+        if (m_tagArray[setID][way] == maskedAddr)
+        {
+            moveToLRU(setID, way);
+            m_tagArray[setID][way] = -1;
+            //m_dirty[setID][way]    = 0;
+            uint8_t mask   = 1 << way;
+            m_dirty[setID] = m_dirty[setID] & (~mask);
+            invalidated    = true;
+            break;
+        }
+    }
+    PIN_ReleaseLock(&m_setLock);
+    //PIN_ReleaseLock(&m_setLocks[setID]);
+    if (invalidated == true)
+        ++m_backInvalidates;
+    #endif
+}
+
+stat_t L2::getHits()
+{
+    return m_hits;
+}
+
+stat_t L2::getMisses()
+{
+    return m_misses;
+}
+
+stat_t L2::getWritebacks()
+{
+    return m_writebacks;
+}
+
+stat_t L2::getBackInvalidates()
+{
+    return m_backInvalidates;
+}
+
+void L2::resetCacheStats()
+{
+    m_hits = 0;
+    m_misses = 0;
+    m_writebacks = 0;
+    m_backInvalidates = 0;
+}
+
+bool L2::isCacheHit(intptr_t addr, int setID, bool isWrite, bool updateReplacementMetadata)
+{
+    intptr_t maskedAddr = addr / m_lineSz;
+    for (int way = 0; way < m_numWays; ++way)
+    {
+        if ((m_tagArray[setID][way] / m_lineSz) == maskedAddr)
+        {
+            if (updateReplacementMetadata) {
+                updateReplacementState(setID, way);
+                hasGotHit[setID][way] = true;
+            }
+            if (isWrite == true)
+            {
+                //m_dirty[setID][way] = 1;
+                uint8_t mask = 1 << way;
+                m_dirty[setID] = m_dirty[setID] | (mask);
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool L2::installNewLine(intptr_t addr, int setID, intptr_t &evictedAddr, bool isWrite)
+{
+    int index = getReplacementIndex(setID);
+    //evictedAddr = m_tagArray[setID][index] * m_lineSz; //line to be kicked out
+    evictedAddr = m_tagArray[setID][index]; //line to be kicked out
+    uint64_t mask = 1 << index;
+    uint64_t retVal;
+    if (hasGotHit[setID][index]) {
+        retVal = mask; 
+    }
+    else {
+        retVal = 0;
+    }
+    assert(retVal == 0 || retVal == mask);
+    if (evictedAddr == -1 * m_lineSz)
+        assert(retVal == 0);
+    //m_tagArray[setID][index] = addr / m_lineSz; //new line inserted 
+    m_tagArray[setID][index] = addr; //new line inserted 
+    hasGotHit[setID][index] = false; 
+    //m_dirty[setID][index]    = (isWrite == true) ? 1 : 0;
+    if (isWrite == true)
+        m_dirty[setID] = m_dirty[setID] | (mask);
+    else
+        m_dirty[setID] = m_dirty[setID] & (~mask);
+    return (retVal != 0);
+}
+
+int L2::findSet(intptr_t addr)
+{
+	intptr_t maskedAddr = addr / m_lineSz;
+    int setIndex = maskedAddr % m_numSets;
+    return setIndex;
+}
+
+
+//Tree-based PLRU implementation
+int L2::getReplacementIndex(int setID)
+{
+    // check if there is a way with an invalid line
+    for (int way = 0; way < m_numWays; ++way)
+    {
+        if (m_tagArray[setID][way] == -1)
+        {
+            updateReplacementState(setID, way);
+            return way;
+        }
+    }
+
+    // no empty way have to kick out the oldest way
+    int retValue {-1};
+    uint64_t oldestWay = 0;
+    for (int i = 0; i < m_numWays; i ++) {
+        if (m_lru_bits[setID][i] < m_lru_bits[setID][oldestWay]) {
+            oldestWay = i;
+        }
+    }
+    retValue = oldestWay;
+
+    assert(retValue != -1);
+    updateReplacementState(setID, retValue);
+    return retValue;
+}
+
+void L2::updateReplacementState(int setID, int wayID)
+{
+    moveToMRU(setID, wayID);
+}
+
+/* used during backinvalidates, could also be used for a
+   aggressive thrash-resistence. 
+   NOTE: update replacement seems to set the current way as far away 
+   from the LRU position. This function sets the invalidated way at
+   the LRU position
+*/
+void L2::moveToLRU (int setID, int wayID)
+{
+    for (int i = 0; i < m_numWays; i++) {
+        if (m_lru_bits[setID][i] < m_lru_bits[setID][wayID]) {
+            m_lru_bits[setID][i]++;
+        }
+    }
+    m_lru_bits[setID][wayID] = 0;
+    
+}
+
+void L2::moveToMRU (int setID, int wayID)
+{
+    for (int i = 0; i < m_numWays; i++) {
+        if (m_lru_bits[setID][i] > m_lru_bits[setID][wayID]) {
+            m_lru_bits[setID][i]--;
+        }
+    }
+    m_lru_bits[setID][wayID] = m_numWays - 1;
+}
+
+void L2::artificialHit(intptr_t addr) {
+    int setID = findSet(addr);
+    bool foundMatch = false;
+    for (int i = 0; i < m_numWays; i++) {
+        if ((addr/m_lineSz) == (m_tagArray[setID][i])) {
+            foundMatch = true;
+            hasGotHit[setID][i] = true;
+        }
+    }
+    assert(foundMatch);
+}
+

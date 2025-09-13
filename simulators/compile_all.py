@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-fnames = ['lru', 'drrip', 'popt-8b', 'opt-ideal']
+fnames = ['lru', 'drrip', 'popt-8b', 'opt-ideal', 'exclusive','re-exclusive']
 for fname in fnames:
 
     origDir = os.getcwd()
