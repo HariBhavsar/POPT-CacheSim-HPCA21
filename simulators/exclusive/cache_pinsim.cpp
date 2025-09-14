@@ -14,6 +14,10 @@
 Cache cache; 
 bool simulateAccesses {false};
 uint64_t numInsns {0};
+uint64_t numInsns_simulated {0};
+std::set<void*> ip_set; 
+std::set<void*> ip_set_simulated; 
+
 
 /* ===================================================================== */
 // Command line switches
@@ -51,11 +55,16 @@ VOID RecordIp(VOID* ip, THREADID tid)
     ++numInsns;
     //assert(false); //not doing I-Cache modeling to save sim time
                      //(Graph application code footprint is often small)
+    ip_set.insert(ip);
     #if 0
-    if (simulateAccesses == true)
+    if (simulateAccesses == true){
+        ip_set_simulated.insert(ip);
+        numInsns_simulated++;
         cache.insertData(reinterpret_cast<intptr_t>(ip), static_cast<int>(tid), false, true); 
+    }
     #endif
 }
+
 
 VOID RecordMemAddrRead(VOID* addr, THREADID tid)
 {
@@ -206,6 +215,10 @@ VOID ThreadStart(THREADID threadIndex, CONTEXT *ctxt, INT32 flags, VOID *v)
 VOID Fini(INT32 code, VOID *v)
 {
     std::cout << "[PINTOOL] No. of Instructions = " << numInsns << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions simulated = " << numInsns_simulated << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions(unique) = " << std::size(ip_set) << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions(unique) simulated = " << std::size(ip_set_simulated) << std::endl;
+
     cache.reportTotalStats();
 }
 
