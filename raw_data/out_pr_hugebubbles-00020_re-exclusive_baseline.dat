@@ -1,4 +1,4 @@
-Read Time:           5.346210
+Read Time:           11.401063
 [GRAPH-STATS] Nodes = 21198119
 [GRAPH-STATS] Edges = 63580358
 [PIN-FUNC-REPLACEMENT] registered data type - CSR-offsets
@@ -6,9 +6,9 @@ Read Time:           5.346210
 [PIN-FUNC-REPLACEMENT] registered data type - irregData
 [PIN-FUNC-REPLACEMENT] registered data type - regData
 ~~~ PINTOOL STATS BEGIN ~~~
-[L1D-STAT] Total Hits = 192343357
-[L1D-STAT] Total Misses = 71613158
-[L1D-STAT] Total Writebacks = 1352247
+[L1D-STAT] Total Hits = 192336728
+[L1D-STAT] Total Misses = 71619787
+[L1D-STAT] Total Writebacks = 1367003
 [L1D-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
@@ -18,19 +18,19 @@ Read Time:           5.346210
 [L1I-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
-[L2-STAT] Total Hits = 2105259
-[L2-STAT] Total Misses = 70860146
-[L2-STAT] Total Writebacks = 9742885
+[L2-STAT] Total Hits = 2128053
+[L2-STAT] Total Misses = 70858737
+[L2-STAT] Total Writebacks = 9741000
 [L2-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
-[LLC-STAT] Total Hits = 9179806
-[LLC-STAT] Total Misses = 61676742
+[LLC-STAT] Total Hits = 9177849
+[LLC-STAT] Total Misses = 61677279
 [LLC-STAT] Total Writebacks = 0
-[LLC-STAT] Hits for DataType - irregData - 9171187
-[LLC-STAT] Misses for DataType - irregData - 53728089
+[LLC-STAT] Hits for DataType - irregData - 9170526
+[LLC-STAT] Misses for DataType - irregData - 53728625
 [LLC-STAT] Writebacks for DataType - irregData - 0
-[LLC-STAT] Deadlines for DataType - irregData - 300616
+[LLC-STAT] Deadlines for DataType - irregData - 300654
 [LLC-STAT] Avg. ReReference for DataType - irregData - 0
 [LLC-STAT] Hits for DataType - regData - 0
 [LLC-STAT] Misses for DataType - regData - 1324883
@@ -102,7 +102,10 @@ Read Time:           5.346210
 ~~~ PINTOOL STATS END ~~~
 [APP] Error = 0.000260444
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
-[PINTOOL] No. of Instructions = 1451392106
+[PINTOOL] No. of Instructions = 1451393234
+[PINTOOL] No. of Instructions simulated = 0
+[PINTOOL] No. of Instructions(unique) = 26208
+[PINTOOL] No. of Instructions(unique) simulated = 0
 [L1D-STAT] Total Hits = 0
 [L1D-STAT] Total Misses = 0
 [L1D-STAT] Total Writebacks = 0

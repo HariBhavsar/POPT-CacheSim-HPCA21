@@ -1,4 +1,4 @@
-Read Time:           7.498422
+Read Time:           11.112340
 [GRAPH-STATS] Nodes = 33554431
 [GRAPH-STATS] Edges = 133518494
 [PIN-FUNC-REPLACEMENT] registered data type - CSR-offsets
@@ -6,9 +6,9 @@ Read Time:           7.498422
 [PIN-FUNC-REPLACEMENT] registered data type - irregData
 [PIN-FUNC-REPLACEMENT] registered data type - regData
 ~~~ PINTOOL STATS BEGIN ~~~
-[L1D-STAT] Total Hits = 285549101
-[L1D-STAT] Total Misses = 148576099
-[L1D-STAT] Total Writebacks = 2340281
+[L1D-STAT] Total Hits = 285663316
+[L1D-STAT] Total Misses = 148461884
+[L1D-STAT] Total Writebacks = 2340782
 [L1D-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
@@ -18,34 +18,34 @@ Read Time:           7.498422
 [L1I-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
-[L2-STAT] Total Hits = 15835100
-[L2-STAT] Total Misses = 135081280
-[L2-STAT] Total Writebacks = 1048424
+[L2-STAT] Total Hits = 15720166
+[L2-STAT] Total Misses = 135082500
+[L2-STAT] Total Writebacks = 1048464
 [L2-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
-[LLC-STAT] Total Hits = 52185019
-[LLC-STAT] Total Misses = 82896255
-[LLC-STAT] Total Writebacks = 518451
-[LLC-STAT] Hits for DataType - irregData - 52184015
-[LLC-STAT] Misses for DataType - irregData - 68258458
+[LLC-STAT] Total Hits = 52184226
+[LLC-STAT] Total Misses = 82898268
+[LLC-STAT] Total Writebacks = 518390
+[LLC-STAT] Hits for DataType - irregData - 52182986
+[LLC-STAT] Misses for DataType - irregData - 68260433
 [LLC-STAT] Writebacks for DataType - irregData - 0
-[LLC-STAT] Deadlines for DataType - irregData - 52107090
-[LLC-STAT] Avg. ReReference for DataType - irregData - 0.689702
-[LLC-STAT] Hits for DataType - regData - 115
+[LLC-STAT] Deadlines for DataType - irregData - 52107641
+[LLC-STAT] Avg. ReReference for DataType - irregData - 0.689734
+[LLC-STAT] Hits for DataType - regData - 103
 [LLC-STAT] Misses for DataType - regData - 2097152
-[LLC-STAT] Writebacks for DataType - regData - 518305
-[LLC-STAT] Deadlines for DataType - regData - 1046315
-[LLC-STAT] Avg. ReReference for DataType - regData - 0.498553
-[LLC-STAT] Hits for DataType - CSR-offsets - 105
+[LLC-STAT] Writebacks for DataType - regData - 518228
+[LLC-STAT] Deadlines for DataType - regData - 1046277
+[LLC-STAT] Avg. ReReference for DataType - regData - 0.498542
+[LLC-STAT] Hits for DataType - CSR-offsets - 116
 [LLC-STAT] Misses for DataType - CSR-offsets - 4194305
 [LLC-STAT] Writebacks for DataType - CSR-offsets - 0
-[LLC-STAT] Deadlines for DataType - CSR-offsets - 4182878
-[LLC-STAT] Avg. ReReference for DataType - CSR-offsets - 2.50339e-05
+[LLC-STAT] Deadlines for DataType - CSR-offsets - 4182872
+[LLC-STAT] Avg. ReReference for DataType - CSR-offsets - 2.76565e-05
 [LLC-STAT] Hits for DataType - CSR-coords - 0
 [LLC-STAT] Misses for DataType - CSR-coords - 8344907
 [LLC-STAT] Writebacks for DataType - CSR-coords - 0
-[LLC-STAT] Deadlines for DataType - CSR-coords - 8322500
+[LLC-STAT] Deadlines for DataType - CSR-coords - 8322270
 [LLC-STAT] Avg. ReReference for DataType - CSR-coords - 0
 [LLC-STAT] Hits for DataType - frontier - 0
 [LLC-STAT] Misses for DataType - frontier - 0
@@ -53,36 +53,36 @@ Read Time:           7.498422
 [LLC-STAT] Deadlines for DataType - frontier - 0
 [LLC-STAT] Avg. ReReference for DataType - frontier - -nan
 [LLC-EVICT-STAT] Eviction stats for DataType - irregData
-[LLC-STAT] No. of Evictions by DataType - irregData - 55948617
-[LLC-STAT] No. of Evictions by DataType - regData - 1759598
-[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 3495759
-[LLC-STAT] No. of Evictions by DataType - CSR-coords - 6830491
+[LLC-STAT] No. of Evictions by DataType - irregData - 55947390
+[LLC-STAT] No. of Evictions by DataType - regData - 1759244
+[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 3499875
+[LLC-STAT] No. of Evictions by DataType - CSR-coords - 6830209
 [LLC-STAT] No. of Evictions by DataType - frontier - 0
-[LLC-STAT] No. of Evictions by DataType - others - 1080
+[LLC-STAT] No. of Evictions by DataType - others - 1089
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
 [LLC-EVICT-STAT] Eviction stats for DataType - regData
-[LLC-STAT] No. of Evictions by DataType - irregData - 1760003
-[LLC-STAT] No. of Evictions by DataType - regData - 0
-[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 111657
-[LLC-STAT] No. of Evictions by DataType - CSR-coords - 220049
+[LLC-STAT] No. of Evictions by DataType - irregData - 1761461
+[LLC-STAT] No. of Evictions by DataType - regData - 2
+[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 110617
+[LLC-STAT] No. of Evictions by DataType - CSR-coords - 219572
 [LLC-STAT] No. of Evictions by DataType - frontier - 0
 [LLC-STAT] No. of Evictions by DataType - others - 38
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
 [LLC-EVICT-STAT] Eviction stats for DataType - CSR-offsets
-[LLC-STAT] No. of Evictions by DataType - irregData - 3497741
-[LLC-STAT] No. of Evictions by DataType - regData - 113074
-[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 134808
-[LLC-STAT] No. of Evictions by DataType - CSR-coords - 437308
+[LLC-STAT] No. of Evictions by DataType - irregData - 3498780
+[LLC-STAT] No. of Evictions by DataType - regData - 112204
+[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 134814
+[LLC-STAT] No. of Evictions by DataType - CSR-coords - 437113
 [LLC-STAT] No. of Evictions by DataType - frontier - 0
-[LLC-STAT] No. of Evictions by DataType - others - 52
+[LLC-STAT] No. of Evictions by DataType - others - 77
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
 [LLC-EVICT-STAT] Eviction stats for DataType - CSR-coords
-[LLC-STAT] No. of Evictions by DataType - irregData - 6827734
-[LLC-STAT] No. of Evictions by DataType - regData - 219190
-[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 440417
-[LLC-STAT] No. of Evictions by DataType - CSR-coords - 835031
+[LLC-STAT] No. of Evictions by DataType - irregData - 6828358
+[LLC-STAT] No. of Evictions by DataType - regData - 220485
+[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 437446
+[LLC-STAT] No. of Evictions by DataType - CSR-coords - 835849
 [LLC-STAT] No. of Evictions by DataType - frontier - 0
-[LLC-STAT] No. of Evictions by DataType - others - 128
+[LLC-STAT] No. of Evictions by DataType - others - 132
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
 [LLC-EVICT-STAT] Eviction stats for DataType - frontier
 [LLC-STAT] No. of Evictions by DataType - irregData - 0
@@ -93,16 +93,19 @@ Read Time:           7.498422
 [LLC-STAT] No. of Evictions by DataType - others - 0
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
 [LLC-EVICT-STAT] Eviction stats for DataType - others
-[LLC-STAT] No. of Evictions by DataType - irregData - 1087
-[LLC-STAT] No. of Evictions by DataType - regData - 49
-[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 63
+[LLC-STAT] No. of Evictions by DataType - irregData - 1142
+[LLC-STAT] No. of Evictions by DataType - regData - 28
+[LLC-STAT] No. of Evictions by DataType - CSR-offsets - 62
 [LLC-STAT] No. of Evictions by DataType - CSR-coords - 137
 [LLC-STAT] No. of Evictions by DataType - frontier - 0
 [LLC-STAT] No. of Evictions by DataType - others - 0
 ~~~ PINTOOL STATS END ~~~
 [APP] Error = 0.956268
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
-[PINTOOL] No. of Instructions = 2050694719
+[PINTOOL] No. of Instructions = 2050695807
+[PINTOOL] No. of Instructions simulated = 0
+[PINTOOL] No. of Instructions(unique) = 26158
+[PINTOOL] No. of Instructions(unique) simulated = 0
 [L1D-STAT] Total Hits = 0
 [L1D-STAT] Total Misses = 0
 [L1D-STAT] Total Writebacks = 0

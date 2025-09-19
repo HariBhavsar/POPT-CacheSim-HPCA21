@@ -1,4 +1,4 @@
-Read Time:           13.950417
+Read Time:           20.392004
 [GRAPH-STATS] Nodes = 18520343
 [GRAPH-STATS] Edges = 292243663
 [PIN-FUNC-REPLACEMENT] registered data type - CSR-offsets
@@ -18,29 +18,29 @@ Read Time:           13.950417
 [L1I-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
-[L2-STAT] Total Hits = 8535102
-[L2-STAT] Total Misses = 309422458
-[L2-STAT] Total Writebacks = 85556635
+[L2-STAT] Total Hits = 8535174
+[L2-STAT] Total Misses = 309422386
+[L2-STAT] Total Writebacks = 85554530
 [L2-STAT] Total BackInvalidates = 0
 ~~~~~~~~~~~~~~~~~~~
 
-[LLC-STAT] Total Hits = 82784789
-[LLC-STAT] Total Misses = 226637669
+[LLC-STAT] Total Hits = 82782619
+[LLC-STAT] Total Misses = 226639767
 [LLC-STAT] Total Writebacks = 0
-[LLC-STAT] Hits for DataType - irregData - 82782939
-[LLC-STAT] Misses for DataType - irregData - 204899394
+[LLC-STAT] Hits for DataType - irregData - 82780890
+[LLC-STAT] Misses for DataType - irregData - 204901489
 [LLC-STAT] Writebacks for DataType - irregData - 0
-[LLC-STAT] Deadlines for DataType - irregData - 2288164
+[LLC-STAT] Deadlines for DataType - irregData - 2288216
 [LLC-STAT] Avg. ReReference for DataType - irregData - 0
-[LLC-STAT] Hits for DataType - regData - 5
-[LLC-STAT] Misses for DataType - regData - 1157639
+[LLC-STAT] Hits for DataType - regData - 6
+[LLC-STAT] Misses for DataType - regData - 1157647
 [LLC-STAT] Writebacks for DataType - regData - 0
-[LLC-STAT] Deadlines for DataType - regData - 106849
+[LLC-STAT] Deadlines for DataType - regData - 106851
 [LLC-STAT] Avg. ReReference for DataType - regData - 0
 [LLC-STAT] Hits for DataType - CSR-offsets - 3
-[LLC-STAT] Misses for DataType - CSR-offsets - 2315175
+[LLC-STAT] Misses for DataType - CSR-offsets - 2315170
 [LLC-STAT] Writebacks for DataType - CSR-offsets - 0
-[LLC-STAT] Deadlines for DataType - CSR-offsets - 116339
+[LLC-STAT] Deadlines for DataType - CSR-offsets - 116325
 [LLC-STAT] Avg. ReReference for DataType - CSR-offsets - 0
 [LLC-STAT] Hits for DataType - CSR-coords - 0
 [LLC-STAT] Misses for DataType - CSR-coords - 18265230
@@ -102,7 +102,10 @@ Read Time:           13.950417
 ~~~ PINTOOL STATS END ~~~
 [APP] Error = 1.12917
 [LLC-EVICT-STAT] ~~~~~~~~~~~~~~~~~~~~~~~~
-[PINTOOL] No. of Instructions = 2451404740
+[PINTOOL] No. of Instructions = 2451404897
+[PINTOOL] No. of Instructions simulated = 0
+[PINTOOL] No. of Instructions(unique) = 26259
+[PINTOOL] No. of Instructions(unique) simulated = 0
 [L1D-STAT] Total Hits = 0
 [L1D-STAT] Total Misses = 0
 [L1D-STAT] Total Writebacks = 0

@@ -7,6 +7,7 @@
 #include "cache_backend.h"
 #include <iostream>
 #include <fstream>
+#include <set>
 
 /* ================================================================== */
 // Global variables 
@@ -213,8 +214,8 @@ VOID Fini(INT32 code, VOID *v)
 {
     std::cout << "[PINTOOL] No. of Instructions = " << numInsns << std::endl;
     std::cout << "[PINTOOL] No. of Instructions simulated = " << numInsns_simulated << std::endl;
-    std::cout << "[PINTOOL] No. of Instructions(unique) = " << std::size(ip_set) << std::endl;
-    std::cout << "[PINTOOL] No. of Instructions(unique) simulated = " << std::size(ip_set_simulated) << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions(unique) = " << ip_set.size() << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions(unique) simulated = " << ip_set_simulated.size() << std::endl;
 
     cache.reportTotalStats();
 }

@@ -1,57 +1,83 @@
+import matplotlib
+matplotlib.use('Agg')   # Use non-GUI backend
 import matplotlib.pyplot as plt
 import numpy as np
 import compiler
 
 app         = 'pr'
 appNick     = 'PAGERANK'
-policies    = ['lru', 'drrip', 'popt-8b', 'opt-ideal']
-policyNicks = ['LRU', 'DRRIP', 'P-OPT', 'T-OPT']
-versions    = ['baseline', 'baseline', 'popt', 'opt-ideal']
-graphs      = ['uk-2002', 'kron25-d4', 'urand25-d4', 'hugebubbles-00020']
-graphNicks  = ['UK-02', 'KRON', 'URND', 'HBBL']
+policies    = ['lru', 'popt-8b', 'exclusive', 're-exclusive']
+policyNicks = ['Non-Inclusive',  'P-OPT', 'Exclusive', 'Re-Exclusive']
+versions    = ['baseline', 'popt', 'baseline', 'baseline']
+graphs      = ['uk-2002', 'kron25-d4', 'urand25-d4', 'hugebubbles-00020', 'GAP-twitter']
+graphNicks  = ['UK-02', 'KRON', 'URND', 'HBBL', 'Twitter']
 
-## Collect data
-data = {}
+# Define distinct colors for each policy
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+
+## Collect LLC Miss data
+data_misses = {}
 for graph in graphs:
-    data[graph] = {}
+    data_misses[graph] = {}
     for p in range(len(policies)):
         policy  = policies[p]
         version = versions[p]
-        data[graph][policy] = compiler.getLLCMisses(app, graph, policy, version)
+        data_misses[graph][policy] = compiler.getLLCMisses(app, graph, policy, version)
 
-## Normalize results
+## Collect Instructions data
+data_instrs = {}
 for graph in graphs:
-    base = data[graph][policies[0]]
-    for policy in policies:
-        data[graph][policy] = base / data[graph][policy]
+    data_instrs[graph] = {}
+    for p in range(len(policies)):
+        policy  = policies[p]
+        version = versions[p]
+        data_instrs[graph][policy] = compiler.getMPKI(app, graph, policy, version)
 
 ## Plot results
-fig = plt.figure(figsize = (5, 3))
+fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=False)  # separate y scales
+
 bwidth = 1 / (1.25 + len(policies))
-maxVal = 0
-for p in range(len(policies)):
-    policy = policies[p]
-    vals   = []
-    for graph in graphs:
-        vals.append(data[graph][policy])
-    maxVal = max(maxVal, max(vals))
-    ind = np.arange(len(vals))
-    plt.bar(ind + p * bwidth, vals, width = bwidth, label = policyNicks[p])
 
-ax = plt.gca()
-ax.set_title('App - ' + appNick, fontweight = 'bold')
-ax.set_xlabel('Input Graphs', fontweight = 'bold')
-ax.set_ylabel('LLC Miss Reduction', fontweight = 'bold')
-ax.set_xticks(np.arange(len(graphs)) + 1.5 * bwidth)
-ax.set_xticklabels(graphNicks)
-ax.set_yticks(np.arange(0, 1.1 * maxVal, 0.2))
-ax.grid(alpha = 0.64, axis = 'y', linestyle = '--')
-ax.legend(loc = 'lower right', framealpha = 1.0, ncol = 2)
-ax.axhline(y = 1, linestyle = '--', color = 'k')
+def plot_bar(ax, data, ylabel, title_suffix):
+    maxVal = 0
+    vals_per_policy = []
+    for p in range(len(policies)):
+        policy = policies[p]
+        vals   = [data[graph][policy] for graph in graphs]
+        vals_per_policy.append(vals)
+        maxVal = max(maxVal, max(vals))
+    ind = np.arange(len(graphs))
+    
+    for p, vals in enumerate(vals_per_policy):
+        ax.bar(ind + p * bwidth, vals, width=bwidth,
+               label=policyNicks[p], color=colors[p])
+    
+    ax.set_title(f'App - {appNick} ({title_suffix})', fontweight='bold')
+    ax.set_xlabel('Input Graphs', fontweight='bold')
+    ax.set_ylabel(ylabel, fontweight='bold')
+    ax.set_xticks(np.arange(len(graphs)) + 1.5 * bwidth)
+    ax.set_xticklabels(graphNicks)
+    ax.set_yticks(np.arange(0, 1.1 * maxVal, maxVal/5))
+    ax.grid(alpha=0.64, axis='y', linestyle='--')
+    # ax.axhline(y=1, linestyle='--', color='k')
 
-plt.tight_layout()
-plt.savefig('llcmiss-red.pdf')
+# Left: LLC Misses
+plot_bar(axes[0], data_misses, ylabel="LLC Misses", title_suffix="LLC Misses")
+
+# Right: Instructions
+plot_bar(axes[1], data_instrs, ylabel="Instructions", title_suffix="Instructions")
+
+# Put legend once above both plots
+fig.legend(
+    loc='lower center',
+    bbox_to_anchor=(0.5, 1.02),  # centered above figure
+    framealpha=1.0,
+    ncol=2
+)
+
+plt.tight_layout(rect=[0,0,1,0.95])  # leave room for legend
+plt.savefig('llcmiss-vs-instr.pdf')
 
 print('*********************************')
-print('[OUTPUT SAVED TO llcmiss-red.pdf]')
+print('[OUTPUT SAVED TO llcmiss-vs-instr.pdf]')
 print('*********************************')

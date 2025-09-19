@@ -1,0 +1,30 @@
+Read Time:           350.711071
+[GRAPH-STATS] Nodes = 134217728
+[GRAPH-STATS] Edges = 4294966740
+[PINTOOL] No. of Instructions = 2686708485
+[PINTOOL] No. of Instructions simulated = 0
+[PINTOOL] No. of Instructions(unique) = 25427
+[PINTOOL] No. of Instructions(unique) simulated = 0
+[L1D-STAT] Total Hits = 0
+[L1D-STAT] Total Misses = 0
+[L1D-STAT] Total Writebacks = 0
+[L1D-STAT] Total BackInvalidates = 0
+~~~~~~~~~~~~~~~~~~~
+
+[L1I-STAT] Total Hits = 0
+[L1I-STAT] Total Misses = 0
+[L1I-STAT] Total Writebacks = 0
+[L1I-STAT] Total BackInvalidates = 0
+~~~~~~~~~~~~~~~~~~~
+
+[L2-STAT] Total Hits = 0
+[L2-STAT] Total Misses = 0
+[L2-STAT] Total Writebacks = 0
+[L2-STAT] Total BackInvalidates = 0
+~~~~~~~~~~~~~~~~~~~
+
+[LLC-STAT] Total Hits = 0
+[LLC-STAT] Total Misses = 0
+[LLC-STAT] Total Writebacks = 0
+[LLC-EVICT-STAT] Eviction stats for DataType - irregData
+C: Tool (or Pin) caused signal 11 at PC 0x7fe05cb3f107

@@ -7,6 +7,7 @@
 #include "cache_backend.h"
 #include <iostream>
 #include <fstream>
+#include <set>
 
 /* ================================================================== */
 // Global variables 
@@ -59,13 +60,13 @@ VOID RecordIp(VOID* ip, THREADID tid)
     //assert(false); //not doing I-Cache modeling to save sim time
                      //(Graph application code footprint is often small)
     ip_set.insert(ip);
-    #if 0
+    // #if 0
     if (simulateAccesses == true){
         ip_set_simulated.insert(ip);
         numInsns_simulated++;
         cache.insertData(reinterpret_cast<intptr_t>(ip), static_cast<int>(tid), false, true); 
     }
-    #endif
+    // #endif
 }
 
 VOID RecordMemAddrRead(VOID* addr, THREADID tid)
@@ -282,8 +283,8 @@ VOID Fini(INT32 code, VOID *v)
 {
     std::cout << "[PINTOOL] No. of Instructions = " << numInsns << std::endl;
     std::cout << "[PINTOOL] No. of Instructions simulated = " << numInsns_simulated << std::endl;
-    std::cout << "[PINTOOL] No. of Instructions(unique) = " << std::size(ip_set) << std::endl;
-    std::cout << "[PINTOOL] No. of Instructions(unique) simulated = " << std::size(ip_set_simulated) << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions(unique) = " << ip_set.size() << std::endl;
+    std::cout << "[PINTOOL] No. of Instructions(unique) simulated = " << ip_set_simulated.size() << std::endl;
 
     cache.reportTotalStats();
 }
